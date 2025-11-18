@@ -18,7 +18,6 @@ Complete database solution for an e-commerce system including schema design, ER 
 - Products (1) → Order Details (Many)
 ## 📊 ER Diagram
 ![ER Diagram](https://github.com/ABDULLAH1SAID/ecommerce-database-design/blob/main/Schema/er_digram.png?raw=true)
-
 ## 🛠️ SQL Queries
 
 ### 1. Daily Revenue Report
