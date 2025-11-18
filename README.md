@@ -114,4 +114,7 @@ where order_date between '2024-11-01'AND '2024-11-30'
 group by p.`name`
 order by topselling desc limit 3;
 ```
+- retrieve a list of customers who have placed orders totaling more than $500 in the past month.
+```sql
+```
 
