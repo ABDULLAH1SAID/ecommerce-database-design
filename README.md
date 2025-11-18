@@ -96,13 +96,13 @@ CREATE TABLE Order_Details (
 
 ```
 ## 🛠️ E-Commerce Analytics Queries
--- daily report of the total revenue for a specific date.
+- daily report of the total revenue for a specific date.
 ```sql
 select sum(total_amount) AS daily_revenue
 from `order` 
 where order_date='2024-11-01 10:30:00';
 ```
--- monthly report of the top-selling products in a month
+- monthly report of the top-selling products in a month
 ```sql
 select p.`name`, sum(od.subtotal) as topselling 
 from `order` o 
