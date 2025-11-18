@@ -95,8 +95,23 @@ CREATE TABLE Order_Details (
 );
 
 ```
-## 🛠️ SQL Queries
-
-### 1. Daily Revenue Report
+## 🛠️ E-Commerce Analytics Queries
+-- daily report of the total revenue for a specific date.
 ```sql
--- Returns total revenue for a specific date
+select sum(total_amount) AS daily_revenue
+from `order` 
+where order_date='2024-11-01 10:30:00';
+```
+-- monthly report of the top-selling products in a month
+```sql
+select p.`name`, sum(od.subtotal) as topselling 
+from `order` o 
+join order_details od
+on o.order_id = od.order_id 
+join product p 
+on od.product_id = p.product_id 
+where order_date between '2024-11-01'AND '2024-11-30'
+group by p.`name`
+order by topselling desc limit 3;
+```
+
