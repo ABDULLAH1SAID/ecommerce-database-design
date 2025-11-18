@@ -116,5 +116,17 @@ order by topselling desc limit 3;
 ```
 - retrieve a list of customers who have placed orders totaling more than $500 in the past month.
 ```sql
+SELECT 
+    c.customer_id,
+    c.first_name,
+    c.last_name,
+    SUM(o.total_amount) AS total_spent_in_november
+FROM customer c
+JOIN `order` o 
+    ON c.customer_id = o.customer_id
+GROUP BY 
+    c.customer_id, c.first_name, c.last_name
+HAVING 
+    SUM(o.total_amount) > 500;
 ```
 
