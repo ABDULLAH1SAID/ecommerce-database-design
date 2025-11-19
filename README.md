@@ -130,3 +130,48 @@ HAVING
     SUM(o.total_amount) > 500;
 ```
 
+## 📦 Denormalization in the E-Commerce System
+### 📘 Why Denormalization Was Applied
+
+In the fully normalized database design, the Order table stores only the customer_id, which means any query that needs customer information such as name or email requires a JOIN with the Customer table.
+
+While normalization maintains data integrity, it may reduce performance in real-world e-commerce systems where:
+- Reports query millions of rows
+- Dashboards need fast loading
+- JOIN operations become expensive
+
+To optimize read operations and preserve the customer data associated with each order, a denormalization strategy was applied by copying selected customer attributes into the Order table.
+
+✔️ Benefits of Denormalization
+
+⚡ Improved query performance (fewer JOINs)
+
+📊 Faster reporting & analytics
+
+🗂️ Preserves customer info at order time even if the customer updates their profile later
+
+🔄 Reduces system load on frequently accessed tables
+
+## 🛠️ Denormalization Implementation
+
+### 1️⃣ Add Denormalized Fields to the Order Table
+```sql
+ALTER TABLE `Order`
+ADD COLUMN customer_first_name VARCHAR(50),
+ADD COLUMN customer_last_name VARCHAR(50),
+ADD COLUMN customer_email VARCHAR(100);
+```
+### 2️⃣ Populate Existing Orders With Customer Data
+```sql
+UPDATE `Order` o
+JOIN Customer c 
+    ON o.customer_id = c.customer_id
+SET 
+    o.customer_first_name = c.first_name,
+    o.customer_last_name = c.last_name,
+    o.customer_email = c.email;
+```
+
+
+  
+
