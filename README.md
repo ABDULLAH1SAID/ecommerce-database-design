@@ -129,6 +129,10 @@ GROUP BY
 HAVING 
     SUM(o.total_amount) > 500;
 ```
+- search for all products with the word "Laptop" in either the product name or description.
+```sql
+SELECT * FROM product WHERE `name` LIKE '%Laptop%' OR `description` LIKE "%Laptop%";
+```
 
 ## 📦 Denormalization in the E-Commerce System
 ### 📘 Why Denormalization Was Applied
