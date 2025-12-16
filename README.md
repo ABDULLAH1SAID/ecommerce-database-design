@@ -133,6 +133,26 @@ HAVING
 ```sql
 SELECT * FROM product WHERE `name` LIKE '%Laptop%' OR `description` LIKE "%Laptop%";
 ```
+- To recommend related products to a customer based on the category of a product they've purchased, you can use a query like this
+```sql
+
+SELECT p.product_id, p.product_name, p.category
+FROM Products p
+WHERE p.category IN (
+    SELECT DISTINCT category
+    FROM Products
+    WHERE product_id IN (
+        SELECT product_id
+        FROM CustomerHistory
+        WHERE customer_id = <customer_id>
+    )
+)
+AND p.product_id NOT IN (
+    SELECT product_id
+    FROM CustomerHistory
+    WHERE customer_id = <customer_id>
+);
+```
 
 ## 📦 Denormalization in the E-Commerce System
 ### 📘 Why Denormalization Was Applied
