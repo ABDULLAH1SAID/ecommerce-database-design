@@ -95,6 +95,58 @@ CREATE TABLE Order_Details (
 );
 
 ```
+- create a sale hitory
+```sql
+CREATE TABLE Sale_History (
+    sale_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    customer_id INT NOT NULL,
+    product_id INT NOT NULL,
+    order_date DATETIME NOT NULL,
+    quantity INT NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_sale_order
+        FOREIGN KEY (order_id) REFERENCES `Order`(order_id),
+
+    CONSTRAINT fk_sale_customer
+        FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
+
+    CONSTRAINT fk_sale_product
+        FOREIGN KEY (product_id) REFERENCES Product(product_id)
+);
+```
+- Automatically Record Sales History on New Order Creation
+  
+```sql
+CREATE TRIGGER trg_create_sale_history  
+AFTER INSERT ON `Order_Details`
+FOR EACH ROW
+BEGIN
+    INSERT INTO Sale_History (
+        order_id,
+        customer_id,
+        product_id,
+        order_date,
+        quantity,
+        total_amount
+    )
+    SELECT
+        o.order_id,
+        o.customer_id,
+        NEW.product_id,
+        o.order_date,
+        NEW.quantity,
+        (NEW.quantity * NEW.unit_price)
+    FROM `Order` o
+    WHERE o.order_id = NEW.order_id;
+END$$
+
+DELIMITER ;
+```
+
+
 ## 🛠️ E-Commerce Analytics Queries
 - daily report of the total revenue for a specific date.
 ```sql
@@ -162,8 +214,29 @@ SELECT *
         WHERE MATCH(`name`, `description`)
         AGAINST ('Laptop');
 ```
-  
+- transaction to lock field update 
+```sql
+START TRANSACTION;
 
+SELECT stock_quantity 
+FROM Product 
+WHERE product_id = 20 
+FOR UPDATE;
+
+COMMIT;
+```
+- transaction to lock Row update 
+```sql
+START TRANSACTION;
+
+SELECT * 
+FROM Product 
+WHERE product_id = 20 
+FOR UPDATE;
+
+COMMIT;
+```
+  
 ## 📦 Denormalization in the E-Commerce System
 ### 📘 Why Denormalization Was Applied
 
