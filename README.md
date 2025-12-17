@@ -153,6 +153,16 @@ AND p.product_id NOT IN (
     WHERE customer_id = <customer_id>
 );
 ```
+- search for all products with the word "Laptop" in either the product name or description using full-text search.
+```sql
+ALTER TABLE product
+    ADD FULLTEXT(`name`, `description`);
+SELECT *
+    FROM product
+        WHERE MATCH(`name`, `description`)
+        AGAINST ('Laptop');
+```
+  
 
 ## 📦 Denormalization in the E-Commerce System
 ### 📘 Why Denormalization Was Applied
