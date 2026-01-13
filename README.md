@@ -278,6 +278,12 @@ SET
     o.customer_last_name = c.last_name,
     o.customer_email = c.email;
 ```
+### 🚀 Query optimization
+This section focuses on practical experiments and performance analysis to
+understand how different queries, execution strategies, and design decisions
+impact database performance.
+
+
 
 
   
