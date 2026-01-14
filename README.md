@@ -306,6 +306,54 @@ ON product(category_id);
 
 
 
+### 🧮 Task2
+- Find the Top Customers by Total Spending 
+### 🧠 SQL Query
+```sql
+SELECT 
+    c.customer_id,
+    c.first_name,
+    SUM(o.total_amount) AS total_spent
+FROM ecommerce.customer c
+JOIN ecommerce.orders o
+    ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.first_name
+ORDER BY total_spent DESC
+LIMIT 10;
+```
+### 🧠 SQL Query (with CTE)
+```sql
+WITH total_amount_spent AS (
+    SELECT 
+        o.customer_id,
+        SUM(o.total_amount) AS total_spent
+    FROM ecommerce.orders o
+    GROUP BY o.customer_id
+)
+SELECT 
+    c.customer_id,
+    c.first_name,
+    ts.total_spent AS total_spent
+FROM ecommerce.customer c
+JOIN total_amount_spent ts
+    ON ts.customer_id = c.customer_id
+ORDER BY total_spent DESC
+LIMIT 10;
+```
+### ⚙️ Optimization Technique
+-- Index on customer_id in orders table
+```sql
+CREATE INDEX idx_order_customer_id
+ON ecommerce.orders(customer_id);
+```
+### ⏱️ Performance Comparison (EXPLAIN ANALYZE)
+| Case          | Index                                          | Execution Time | Notes                                                                         |
+| ------------- | ---------------------------------------------- | -------------- | ----------------------------------------------------------------------------- |
+| Without Index | No                                             | ~175,450 ms    | Seq Scan + Hash Join + Hash Aggregate; heavy I/O                              |
+| With Index    | Yes (`idx_order_customer_id`, `customer_pkey`) | ~133,653 ms    | Index Scan + Merge Join + GroupAggregate; significantly faster, less disk I/O |
+
+
+
 
 
 
