@@ -283,6 +283,32 @@ This section focuses on practical experiments and performance analysis to
 understand how different queries, execution strategies, and design decisions
 impact database performance.
 
+### 🧮 Task1
+- Retrieve the total number of products in each category
+### 🧠 SQL Query
+```sql
+SELECT c.category_name, COUNT(p.product_id) AS total_products
+FROM category c
+LEFT JOIN product p
+  ON c.category_id = p.category_id
+GROUP BY c.category_name;
+```
+### ⚙️ Optimization Technique
+```sql
+CREATE INDEX idx_product_category
+ON product(category_id);
+```
+### ⏱️ Performance Comparison (EXPLAIN ANALYZE)
+| Case | Index | Execution Time |
+|-----|------|----------------|
+| Before Optimization | No | ~1708.3 ms |
+| After Optimization | Yes (category_id) | ~1704.5 ms |
+
+
+
+
+
+
 
 
 
