@@ -305,7 +305,6 @@ ON product(category_id);
 | After Optimization | Yes (category_id) | ~1704.5 ms |
 
 
-
 ### 🧮 Task2
 - Find the Top Customers by Total Spending 
 ### 🧠 SQL Query
@@ -352,8 +351,49 @@ ON ecommerce.orders(customer_id);
 | Without Index | No                                             | ~175,450 ms    | Seq Scan + Hash Join + Hash Aggregate; heavy I/O                              |
 | With Index    | Yes (`idx_order_customer_id`, `customer_pkey`) | ~133,653 ms    | Index Scan + Merge Join + GroupAggregate; significantly faster, less disk I/O |
 
+### 🧮 Task4
+- Calculate the Revenue Generated from Each Product Category
+### 🧠 SQL Query
+```sql
+SELECT
+    p.category_id,
+    SUM(od.unit_price * od.quantity) AS category_revenue
+FROM ecommerce.product p
+JOIN ecommerce.order_details od
+    ON p.product_id = od.product_id
+GROUP BY p.category_id
+ORDER BY category_revenue DESC;
+```
+### 🧠 SQL Query (Using CTE)
 
-
+```sql
+WITH category_revenue AS (
+    SELECT
+        p.category_id,
+        SUM(od.unit_price * od.quantity) AS total_revenue
+    FROM ecommerce.product p
+    JOIN ecommerce.order_details od
+        ON p.product_id = od.product_id
+    GROUP BY p.category_id
+)
+SELECT
+    category_id,
+    total_revenue
+FROM category_revenue
+ORDER BY total_revenue DESC;
+```
+### ⚙️ Optimization Technique
+- Added index on `order_details.product_id` to optimize joins
+```sql
+CREATE INDEX idx_order_details_product_id
+ON ecommerce.order_details(product_id);
+```
+- Used CTE for pre-aggregation to reduce intermediate result size
+### ⏱️ Performance Comparison (EXPLAIN ANALYZE)
+| Case          | Index                                  | Execution Time | Notes                                                          |
+| ------------- | -------------------------------------- | -------------- | -------------------------------------------------------------- |
+| Without Index | ❌ No                                   | ~712,000 ms    | Parallel Seq Scan + Hash Join + heavy disk-based aggregation   |
+| With Index    | ✅ Yes (`idx_order_details_product_id`) | ~403,000 ms    | Index Scan + Merge Join; reduced disk I/O and faster execution |
 
 
 
