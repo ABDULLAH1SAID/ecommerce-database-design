@@ -351,6 +351,34 @@ ON ecommerce.orders(customer_id);
 | Without Index | No                                             | ~175,450 ms    | Seq Scan + Hash Join + Hash Aggregate; heavy I/O                              |
 | With Index    | Yes (`idx_order_customer_id`, `customer_pkey`) | ~133,653 ms    | Index Scan + Merge Join + GroupAggregate; significantly faster, less disk I/O |
 
+### 🧮 Task3
+- Retrieve all products with stock less than 10 along with their category
+### 🧠 SQL Query
+
+```sql
+SELECT 
+    p.product_id,
+    p.name AS product_name,
+    p.stock_quantity,
+    c.category_name
+FROM ecommerce.product p
+JOIN ecommerce.categories c
+    ON p.category_id = c.category_id
+WHERE p.stock_quantity < 10
+ORDER BY p.stock_quantity ASC;
+```
+### ⚙️ Optimization Technique
+- Added composite index on product(stock_quantity, category_id) to optimize filter and join:
+```sql
+CREATE INDEX idx_products_stock_category
+ON ecommerce.product(stock_quantity, category_id);
+```
+### ⏱️ Performance Comparison (EXPLAIN ANALYZE)
+| Case          | Index                                 | Execution Time | Notes                                                                |
+| ------------- | ------------------------------------- | -------------- | -------------------------------------------------------------------- |
+| Without Index | ❌ No                                  | ~603 ms        | Parallel Seq Scan + Hash Join + memory-based sort; scanned 1.6M rows |
+| With Index    | ✅ Yes (`idx_products_stock_category`) | ~212 ms        | Bitmap Index Scan + Hash Join; scanned 95,000 rows only, faster sort |
+
 ### 🧮 Task4
 - Calculate the Revenue Generated from Each Product Category
 ### 🧠 SQL Query
@@ -365,7 +393,6 @@ GROUP BY p.category_id
 ORDER BY category_revenue DESC;
 ```
 ### 🧠 SQL Query (Using CTE)
-
 ```sql
 WITH category_revenue AS (
     SELECT
